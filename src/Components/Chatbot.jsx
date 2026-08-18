@@ -8,6 +8,7 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
+import { motion } from 'framer-motion';
 
 const ChatBot = ({ onClose }) => {
   const [userQuestion, setUserQuestion] = useState('');
@@ -54,26 +55,34 @@ const ChatBot = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed bottom-6 right-4 sm:right-6 w-[95%] sm:w-96 z-50 shadow-2xl border border-gray-200 bg-white rounded-xl flex flex-col overflow-hidden">
-      <div className="bg-indigo-600 text-white p-4 font-semibold text-lg flex justify-between items-center">
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="fixed bottom-6 right-4 sm:right-6 w-[95%] sm:w-96 z-50 shadow-2xl bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-3xl flex flex-col overflow-hidden"
+    >
+      <div className="bg-blue-600 text-white p-4 font-semibold text-lg flex justify-between items-center">
         <div className="flex items-center gap-2">
           <FaRobot className="text-xl" />
           AI Assistant
         </div>
         <button onClick={onClose} aria-label="Close chatbot">
-          <FaTimes className="text-white hover:text-red-300 text-lg" />
+          <FaTimes className="text-white/80 hover:text-white text-lg transition" />
         </button>
       </div>
 
-      <div className="h-96 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50 text-sm scrollbar-thin scrollbar-thumb-gray-300">
+      <div className="h-96 overflow-y-auto px-4 py-3 space-y-3 bg-transparent text-sm scrollbar-thin scrollbar-thumb-white/10">
         {chatHistory.length === 0 ? (
-          <p className="text-gray-400 text-center mt-20">
+          <p className="text-neutral-500 text-center mt-20">
             Start the conversation…
           </p>
         ) : (
           chatHistory.map((msg, i) => (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
               className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
@@ -83,16 +92,16 @@ const ChatBot = ({ onClose }) => {
               >
                 <div className="mb-1">
                   {msg.sender === 'user' ? (
-                    <FaUser className="text-blue-500" />
+                    <FaUser className="text-blue-400" />
                   ) : (
-                    <FaRobot className="text-indigo-600" />
+                    <FaRobot className="text-blue-500" />
                   )}
                 </div>
                 <div
-                  className={`rounded-xl px-4 py-2 ${
+                  className={`rounded-2xl px-4 py-2 ${
                     msg.sender === 'user'
-                      ? 'bg-blue-500 text-white rounded-br-none'
-                      : 'bg-gray-200 text-gray-900 rounded-bl-none'
+                      ? 'bg-blue-600 text-white rounded-br-sm'
+                      : 'bg-white/10 text-neutral-100 rounded-bl-sm'
                   }`}
                 >
                   {msg.sender === 'bot' ? (
@@ -102,7 +111,7 @@ const ChatBot = ({ onClose }) => {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))
         )}
         <div ref={chatEndRef} />
@@ -110,28 +119,30 @@ const ChatBot = ({ onClose }) => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 p-3 border-t bg-white"
+        className="flex items-center gap-2 p-3 border-t border-white/10"
       >
         <input
           type="text"
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 px-4 py-2 bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Ask me anything..."
           value={userQuestion}
           onChange={(e) => setUserQuestion(e.target.value)}
         />
-        <button
+        <motion.button
+          whileHover={{ scale: loading ? 1 : 1.08 }}
+          whileTap={{ scale: loading ? 1 : 0.92 }}
           type="submit"
-          className="text-indigo-600 hover:text-indigo-800 p-2"
+          className="text-blue-500 hover:text-blue-400 p-2 transition disabled:opacity-50"
           disabled={loading}
         >
           {loading ? <FaSpinner className="animate-spin" /> : <FaPaperPlane />}
-        </button>
+        </motion.button>
       </form>
 
       {error && (
-        <p className="text-red-500 text-center text-sm px-4 py-2">{error}</p>
+        <p className="text-red-400 text-center text-sm px-4 py-2">{error}</p>
       )}
-    </div>
+    </motion.div>
   );
 };
 

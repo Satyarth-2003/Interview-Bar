@@ -37,7 +37,7 @@ function LoadingSteps() {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-        className="text-blue-600 text-5xl mb-4"
+        className="text-blue-500 text-5xl mb-4"
       >
         <FaSpinner />
       </motion.div>
@@ -47,7 +47,7 @@ function LoadingSteps() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
-        className="text-lg font-semibold text-gray-700"
+        className="text-lg font-semibold text-neutral-300"
       >
         {steps[stepIndex]}
       </motion.p>
@@ -137,11 +137,11 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-50 px-6 py-10 max-w-4xl mx-auto mt-20 bg-white text-gray-900 rounded-lg shadow-lg"
+      className="min-h-50 px-6 py-10 max-w-5xl mx-auto"
     >
       <header className="flex justify-between items-center mb-10">
-        <h1 className="text-4xl font-bold flex items-center gap-3 text-blue-600">
-          <FaPenFancy /> AI Cover Letter Generator
+        <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-white">
+          <FaPenFancy className="text-blue-500" /> AI Cover Letter Generator
         </h1>
       </header>
 
@@ -151,32 +151,34 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
           placeholder="Job Title"
           value={jobTitle}
           onChange={(e) => setJobTitle(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="text"
           placeholder="Company Name"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <textarea
           rows={5}
           placeholder="Additional information (skills, experience, achievements)"
           value={additionalInfo}
           onChange={(e) => setAdditionalInfo(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </section>
 
       <section className="mb-8 flex flex-wrap items-center gap-4">
-        <button
+        <motion.button
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleGenerate}
           disabled={loading}
-          className={`flex items-center gap-2 px-6 py-2 rounded font-semibold transition ${
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition shadow-lg ${
             loading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-white/10 text-neutral-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/25'
           }`}
         >
           {loading ? (
@@ -188,12 +190,12 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
               <FaFileAlt /> Generate Cover Letter
             </>
           )}
-        </button>
+        </motion.button>
 
         {coverLetter && (
           <button
             onClick={resetAll}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded font-semibold transition focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="flex items-center gap-2 border border-white/20 text-white hover:bg-white/10 px-5 py-3 rounded-full font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <FaArrowUp /> New Letter
           </button>
@@ -201,7 +203,7 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
       </section>
 
       {error && (
-        <p className="text-red-500 font-semibold mb-4 text-lg" role="alert">
+        <p className="bg-red-500/15 text-red-400 rounded-xl px-4 py-3 font-semibold mb-4 text-lg" role="alert">
           {error}
         </p>
       )}
@@ -215,27 +217,31 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center py-10"
         >
-          <FaCheck className="text-green-600 text-6xl mb-4" />
-          <p className="text-2xl font-bold text-green-700">Cover Letter Ready!</p>
+          <FaCheck className="text-emerald-400 text-6xl mb-4" />
+          <p className="text-2xl font-semibold tracking-tight text-white">Cover Letter Ready!</p>
         </motion.div>
       )}
 
       {coverLetter && (
-        <section
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ y: -4, scale: 1.005 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           id="cover-letter-result"
-          className="relative p-6 rounded-lg shadow-md border whitespace-pre-line bg-gray-50 border-gray-300 text-gray-900"
+          className="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-white/20 transition whitespace-pre-line"
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-blue-600 flex items-center gap-2">
-              <FaLightbulb /> Generated Cover Letter
+            <h2 className="text-2xl font-semibold tracking-tight text-white flex items-center gap-2">
+              <FaLightbulb className="text-blue-500" /> Generated Cover Letter
             </h2>
             <button
               onClick={copyToClipboard}
-              className="flex items-center gap-2 text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
+              className="flex items-center gap-2 text-sm border border-white/20 text-white hover:bg-white/10 px-4 py-2 rounded-full transition"
             >
               {copied ? (
                 <>
-                  <FaCheck /> Copied
+                  <FaCheck className="text-emerald-400" /> Copied
                 </>
               ) : (
                 <>
@@ -244,8 +250,8 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
               )}
             </button>
           </div>
-          <p className="text-lg leading-relaxed whitespace-pre-wrap">{coverLetter}</p>
-        </section>
+          <p className="text-lg leading-relaxed whitespace-pre-wrap text-neutral-300">{coverLetter}</p>
+        </motion.section>
       )}
     </motion.div>
   );

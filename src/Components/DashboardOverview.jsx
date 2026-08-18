@@ -7,8 +7,6 @@ import {
   FaListAlt,
   FaChartBar,
   FaQuoteRight,
-  FaUserTie,
-  FaComments,
   FaPlayCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -21,8 +19,8 @@ import {
   orderBy,
   where,
 } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { db } from "../firebase";
+import { getAnonymousUserId } from "../utils/anonymousUser";
 
 const tipsList = [
   "Practice mock interviews daily!",
@@ -30,6 +28,12 @@ const tipsList = [
   "Master fundamentals instead of just frameworks.",
   "Keep your resume updated after every mock.",
   "Use ChatGPT to simulate interviews!",
+];
+
+const statTiles = [
+  { key: "total", label: "Total Interviews", gradient: "from-blue-500/20 to-indigo-500/5", ring: "ring-blue-500/30" },
+  { key: "completed", label: "Completed", gradient: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-500/30" },
+  { key: "pending", label: "Pending", gradient: "from-amber-500/20 to-amber-500/5", ring: "ring-amber-500/30" },
 ];
 
 const DashboardOverview = () => {
@@ -44,65 +48,46 @@ const DashboardOverview = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setTipIndex((prev) => (prev + 1) % tipsList.length);
-      // No need for tipIndex in dependency array since we use functional update
     }, 7000);
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     setLoading(true);
+    const userId = getAnonymousUserId();
 
-    // Listen to Firebase auth state changes
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("User logged in:", user.uid);
+    const q = query(
+      collection(db, "interview_submissions"),
+      where("userId", "==", userId),
+      orderBy("date", "desc")
+    );
 
-        // Build Firestore query
-        const q = query(
-          collection(db, "interview_submissions"),
-          where("userId", "==", user.uid),
-          orderBy("date", "desc")
-        );
-
-        // Listen to Firestore data
-        const unsubscribeSnapshot = onSnapshot(
-          q,
-          (snapshot) => {
-            const interviewsData = snapshot.docs.map((doc) => {
-              const data = doc.data();
-              return {
-                id: doc.id,
-                company: data.company || "",
-                position: data.position || "",
-                date: data.date || "",
-                status: data.status || "Pending",
-                score: data.score ?? null,
-                feedback: data.feedback || "",
-                tips: data.tips || "",
-              };
-            });
-            setInterviews(interviewsData);
-            setLoading(false);
-            console.log("Interviews state updated:", interviewsData);
-          },
-          (error) => {
-            console.error("Error fetching interviews:", error);
-            setLoading(false);
-          }
-        );
-
-        return () => unsubscribeSnapshot();
-      } else {
-        console.error("User not logged in. Cannot fetch interviews.");
-        setInterviews([]);
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const interviewsData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            company: data.company || "",
+            position: data.position || "",
+            date: data.date || "",
+            status: data.status || "Pending",
+            score: data.score ?? null,
+            feedback: data.feedback || "",
+            tips: data.tips || "",
+          };
+        });
+        setInterviews(interviewsData);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching interviews:", error);
         setLoading(false);
       }
-    });
+    );
 
-    // Cleanup auth listener on unmount
-    return () => unsubscribeAuth();
+    return () => unsubscribe();
   }, []);
 
   const filteredInterviews = interviews.filter((i) => {
@@ -115,35 +100,29 @@ const DashboardOverview = () => {
 
   const completed = interviews.filter((i) => i.status === "Completed").length;
   const pending = interviews.filter((i) => i.status === "Pending").length;
+  const stats = { total: interviews.length, completed, pending };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <h2 className="text-3xl font-bold text-center text-indigo-700 mb-8 flex items-center justify-center gap-2">
-        <FaListAlt /> Interview Dashboard
+      <h2 className="text-3xl font-semibold text-center text-white mb-8 flex items-center justify-center gap-3 tracking-tight">
+        <FaListAlt className="text-blue-500" /> Interview Dashboard
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="bg-blue-100 text-blue-800 p-4 rounded-lg flex items-center justify-between shadow">
-          <div>
-            <p className="text-sm font-semibold">Total Interviews</p>
-            <h3 className="text-2xl font-bold">{interviews.length}</h3>
-          </div>
-          <FaChartBar className="text-3xl" />
-        </div>
-        <div className="bg-green-100 text-green-800 p-4 rounded-lg flex items-center justify-between shadow">
-          <div>
-            <p className="text-sm font-semibold">Completed</p>
-            <h3 className="text-2xl font-bold">{completed}</h3>
-          </div>
-          <FaChartBar className="text-3xl" />
-        </div>
-        <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg flex items-center justify-between shadow">
-          <div>
-            <p className="text-sm font-semibold">Pending</p>
-            <h3 className="text-2xl font-bold">{pending}</h3>
-          </div>
-          <FaChartBar className="text-3xl" />
-        </div>
+        {statTiles.map((tile) => (
+          <motion.div
+            whileHover={{ y: -4, scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            key={tile.key}
+            className={`bg-gradient-to-br ${tile.gradient} ring-1 ${tile.ring} backdrop-blur-xl p-5 rounded-2xl flex items-center justify-between`}
+          >
+            <div>
+              <p className="text-sm font-medium text-neutral-300">{tile.label}</p>
+              <h3 className="text-3xl font-semibold text-white mt-1">{stats[tile.key]}</h3>
+            </div>
+            <FaChartBar className="text-2xl text-neutral-400" />
+          </motion.div>
+        ))}
       </div>
 
       <AnimatePresence mode="wait">
@@ -153,25 +132,23 @@ const DashboardOverview = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.5 }}
-          className="bg-indigo-50 text-indigo-800 p-4 rounded-md flex items-center gap-3 mb-8 shadow"
+          className="bg-white/5 border border-white/10 text-neutral-200 p-4 rounded-2xl flex items-center gap-3 mb-8"
         >
-          <FaQuoteRight className="text-2xl" />
-          <p className="text-sm font-semibold">{tipsList[tipIndex]}</p>
+          <FaQuoteRight className="text-xl text-blue-500" />
+          <p className="text-sm font-medium">{tipsList[tipIndex]}</p>
         </motion.div>
       </AnimatePresence>
 
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div className="flex flex-wrap gap-4 items-center">
           <button
-            onClick={() => {
-              navigate("/dashboard/interview-form");
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
+            onClick={() => navigate("/interview-form")}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-full shadow-lg shadow-blue-600/20 flex items-center gap-2 text-base font-semibold transition"
           >
             <FaPlayCircle className="text-lg" />
             Take Interview
           </button>
-          <span className="text-gray-600 text-sm ml-3">
+          <span className="text-neutral-400 text-sm ml-1">
             Choose interview type or take an interview now
           </span>
         </div>
@@ -182,24 +159,24 @@ const DashboardOverview = () => {
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-300 px-3 py-2 rounded text-sm"
+            className="border border-white/10 bg-white/5 text-white placeholder:text-neutral-500 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="border border-gray-300 px-2 py-2 rounded text-sm"
+            className="border border-white/10 bg-white/5 text-white px-2 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">All</option>
-            <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
+            <option className="bg-neutral-900" value="all">All</option>
+            <option className="bg-neutral-900" value="completed">Completed</option>
+            <option className="bg-neutral-900" value="pending">Pending</option>
           </select>
         </div>
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-500 py-8">Loading interviews...</p>
+        <p className="text-center text-neutral-400 py-8">Loading interviews...</p>
       ) : filteredInterviews.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">
+        <div className="text-center py-10 text-neutral-400">
           <p className="text-lg flex items-center justify-center gap-2">
             <FaSearch /> No interviews found.
           </p>
@@ -210,22 +187,24 @@ const DashboardOverview = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredInterviews.map((i) => (
-            <div
+            <motion.div
               key={i.id}
-              className="border p-5 rounded-lg shadow hover:shadow-lg transition"
+              whileHover={{ y: -4 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="border border-white/10 bg-white/5 backdrop-blur-xl p-5 rounded-2xl hover:border-white/20 transition"
             >
               <div className="flex justify-between mb-2">
                 <div>
-                  <h3 className="text-lg font-bold text-indigo-800">
+                  <h3 className="text-lg font-semibold text-white">
                     {i.position} @ {i.company}
                   </h3>
-                  <p className="text-sm text-gray-500">Date: {i.date}</p>
+                  <p className="text-sm text-neutral-400">Date: {i.date}</p>
                 </div>
                 <span
-                  className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  className={`text-xs font-semibold px-2 py-1 rounded-full h-fit ${
                     i.status === "Completed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-800"
+                      ? "bg-emerald-500/15 text-emerald-400"
+                      : "bg-amber-500/15 text-amber-400"
                   }`}
                 >
                   {i.status}
@@ -234,70 +213,76 @@ const DashboardOverview = () => {
 
               {i.score !== null && (
                 <div className="mt-2">
-                  <p className="text-sm text-gray-600 font-medium">Score</p>
-                  <div className="w-full bg-gray-200 h-3 rounded">
+                  <p className="text-sm text-neutral-400 font-medium">Score</p>
+                  <div className="w-full bg-white/10 h-2 rounded-full mt-1">
                     <div
-                      className="bg-blue-600 h-3 rounded"
+                      className="bg-blue-500 h-2 rounded-full"
                       style={{ width: `${i.score}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm mt-1">{i.score}%</p>
+                  <p className="text-sm mt-1 text-neutral-300">{i.score}%</p>
                 </div>
               )}
 
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   onClick={() => setSelectedInterview(i)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded flex items-center gap-2 text-base font-semibold"
+                  className="bg-blue-600/90 hover:bg-blue-500 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold transition"
                 >
                   <FaCommentDots />
                   View Feedback
                 </button>
                 <button
-                  onClick={() => alert("Retaking...")}
-                  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded flex items-center gap-2 text-base font-semibold"
+                  onClick={() => navigate("/interview-form")}
+                  className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold transition"
                 >
                   <FaRedoAlt />
                   Retake
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
 
       {selectedInterview && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setSelectedInterview(null)}
+        >
+          <div
+            className="bg-neutral-900 border border-white/10 p-6 rounded-3xl shadow-2xl max-w-md w-full relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              className="absolute top-2 right-3 text-xl"
+              className="absolute top-4 right-4 text-xl text-neutral-400 hover:text-white"
               onClick={() => setSelectedInterview(null)}
             >
               &times;
             </button>
-            <h3 className="text-xl font-bold mb-2 text-indigo-700">
+            <h3 className="text-xl font-semibold mb-2 text-white">
               {selectedInterview.position} @ {selectedInterview.company}
             </h3>
-            <p className="text-sm mb-1 text-gray-600">
+            <p className="text-sm mb-1 text-neutral-400">
               Date: {selectedInterview.date}
             </p>
-            <p className="text-sm mb-1">
-              <strong>Status:</strong> {selectedInterview.status}
+            <p className="text-sm mb-1 text-neutral-300">
+              <strong className="text-white">Status:</strong> {selectedInterview.status}
             </p>
-            <p className="text-sm mt-2 mb-2">
-              <strong>Feedback:</strong>{" "}
+            <p className="text-sm mt-2 mb-2 text-neutral-300">
+              <strong className="text-white">Feedback:</strong>{" "}
               {selectedInterview.feedback || "No feedback available."}
             </p>
-            <p className="text-sm text-gray-700">
-              <strong>Improvement Tips:</strong> {selectedInterview.tips}
+            <p className="text-sm text-neutral-300">
+              <strong className="text-white">Improvement Tips:</strong> {selectedInterview.tips}
             </p>
           </div>
         </div>
       )}
 
       <button
-        onClick={() => navigate("/dashboard/interview")}
-        className="fixed bottom-6 right-6 bg-indigo-600 text-white p-5 rounded-full shadow-lg hover:bg-indigo-700 transition z-50"
+        onClick={() => navigate("/interview-form")}
+        className="fixed bottom-6 right-6 bg-blue-600 text-white p-5 rounded-full shadow-lg shadow-blue-600/30 hover:bg-blue-500 transition z-50"
         title="Start Interview"
       >
         <FaPlay />

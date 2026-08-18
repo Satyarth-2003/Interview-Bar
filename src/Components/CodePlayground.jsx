@@ -577,19 +577,19 @@ const CodePlayground = () => {
 
   return (
     <motion.div
-      className="max-w-6xl mx-auto px-6 py-6 bg-gray-50 text-gray-900 min-h-screen"
+      className="max-w-6xl mx-auto px-6 py-10 bg-black text-white min-h-screen"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 max-w-3xl mx-auto">
         <select
           value={selectedQuestionId}
           onChange={(e) => setSelectedQuestionId(Number(e.target.value))}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {questions.map((q) => (
-            <option key={q.id} value={q.id}>
+            <option key={q.id} value={q.id} className="bg-neutral-900">
               {q.title}
             </option>
           ))}
@@ -598,52 +598,52 @@ const CodePlayground = () => {
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="javascript">JavaScript</option>
-          <option value="python">Python</option>
-          <option value="cpp">C++</option>
+          <option value="javascript" className="bg-neutral-900">JavaScript</option>
+          <option value="python" className="bg-neutral-900">Python</option>
+          <option value="cpp" className="bg-neutral-900">C++</option>
         </select>
       </div>
 
-      <div className="mb-4 max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">{question.title}</h1>
-        <p className="text-gray-700 mb-2">{question.description}</p>
+      <div className="mb-6 max-w-3xl mx-auto">
+        <h1 className="text-3xl font-semibold mb-2 text-white tracking-tight">{question.title}</h1>
+        <p className="text-neutral-400 mb-3">{question.description}</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="inline-block px-3 py-1 bg-indigo-200 text-indigo-800 rounded font-semibold text-sm">
+          <span className="inline-block px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-full font-semibold text-sm">
             Difficulty: {question.difficulty}
           </span>
           {question.tags.map((tag) => (
             <span
               key={tag}
-              className="inline-block px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm"
+              className="inline-block px-3 py-1 bg-white/5 border border-white/10 text-neutral-300 rounded-full text-sm"
             >
               {tag}
             </span>
           ))}
         </div>
 
-        <div className="bg-gray-100 p-4 rounded border border-gray-300 overflow-auto">
-          <h2 className="text-xl font-semibold mb-2">Examples</h2>
-          <ul className="list-disc list-inside space-y-1 text-gray-700">
+        <div className="bg-white/5 border border-white/10 backdrop-blur-xl p-4 rounded-2xl overflow-auto">
+          <h2 className="text-xl font-semibold mb-2 text-white tracking-tight">Examples</h2>
+          <ul className="list-disc list-inside space-y-1 text-neutral-300">
             {question.examples.map((ex, idx) => (
               <li key={idx}>
-                <strong>Input:</strong> {ex.input} &nbsp;&rarr;&nbsp;{" "}
-                <strong>Output:</strong> {ex.output}
+                <strong className="text-white">Input:</strong> {ex.input} &nbsp;&rarr;&nbsp;{" "}
+                <strong className="text-white">Output:</strong> {ex.output}
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      <div className="flex space-x-4 mb-4 justify-center max-w-3xl mx-auto">
+      <div className="flex space-x-2 mb-0 justify-center max-w-3xl mx-auto">
         {["code", "input", "output"].map((tab) => (
           <button
             key={tab}
-            className={`px-4 py-2 rounded-t-lg font-semibold ${
+            className={`px-4 py-2 rounded-t-xl font-semibold transition ${
               activeTab === tab
-                ? "bg-indigo-600 text-white shadow"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-white/10 text-white border border-white/10 border-b-0"
+                : "text-neutral-400 hover:text-white hover:bg-white/5"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -659,14 +659,14 @@ const CodePlayground = () => {
             height="400px"
             extensions={[LANG_EXTENSIONS[language]()]}
             onChange={setCode}
-            theme="light"
-            className="rounded border border-gray-300 shadow"
+            theme="dark"
+            className="rounded-xl overflow-hidden border border-white/10 shadow-2xl"
           />
         )}
 
         {activeTab === "input" && (
           <textarea
-            className="w-full h-48 p-3 rounded border border-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full h-48 p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter custom input for your code here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -674,33 +674,37 @@ const CodePlayground = () => {
         )}
 
         {activeTab === "output" && (
-          <pre className="whitespace-pre-wrap p-4 rounded border border-gray-300 bg-gray-100 text-green-700 max-h-48 overflow-auto">
+          <pre className="whitespace-pre-wrap p-4 rounded-xl border border-white/10 bg-white/5 text-blue-400 max-h-48 overflow-auto">
             {output}
           </pre>
         )}
       </div>
 
       <div className="flex space-x-4 justify-end max-w-3xl mx-auto">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleReset}
-          className="px-6 py-2 rounded bg-gray-300 text-gray-700 hover:bg-gray-400 font-semibold transition"
+          className="px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 font-semibold transition"
           title="Reset code to starter template"
         >
           Reset
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: isRunning ? 1 : 1.03 }}
+          whileTap={{ scale: isRunning ? 1 : 0.97 }}
           onClick={handleRun}
           disabled={isRunning}
-          className={`px-6 py-2 rounded text-white font-semibold transition ${
+          className={`px-6 py-3 rounded-full text-white font-semibold shadow-lg shadow-blue-600/25 transition disabled:opacity-50 ${
             isRunning
-              ? "bg-indigo-300 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700"
+              ? "bg-blue-800 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-500"
           }`}
           title="Run code (Ctrl+Enter)"
         >
           {isRunning ? "Running..." : "Run Code (Ctrl+Enter)"}
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   );

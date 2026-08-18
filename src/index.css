@@ -1,31 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+  --accent: #0a84ff;
+  --accent-2: #7c5cff;
+}
 
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
-  font-family: 'Outfit', sans-serif;
+  background: #000;
 }
 
 body {
-  background: linear-gradient(to bottom right, #eef2ff, #e9d5ff, #eef2ff); /* equivalent of your tailwind gradient */
-  /* Or use Tailwind’s colors if you want exact matches */
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  color: #f5f5f7;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
 }
 
 ::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+.glow-text {
+  background: linear-gradient(90deg, #ffffff 0%, #a1a1a6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accent-gradient {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-html{
-   background: linear-gradient(to bottom right, #eef2ff, #e9d5ff, #eef2ff);
+.mesh-bg {
+  background:
+    radial-gradient(600px circle at 15% 10%, rgba(10, 132, 255, 0.18), transparent 40%),
+    radial-gradient(500px circle at 85% 25%, rgba(124, 92, 255, 0.16), transparent 45%),
+    radial-gradient(700px circle at 50% 100%, rgba(10, 132, 255, 0.10), transparent 50%),
+    #000;
 }
-html {
-  scroll-behavior: smooth;
-}
-
-html {
-  scroll-padding-top: 64px; /* height of your navbar */
-}
-
-
-
- 

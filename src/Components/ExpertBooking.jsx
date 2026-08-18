@@ -216,19 +216,19 @@ const ExpertBooking = () => {
 
   return (
     <motion.div
-      className="max-w-6xl mx-auto px-6 py-6"
+      className="max-w-6xl mx-auto px-4 py-10"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-3xl font-bold text-blue-600 text-center mb-10 flex justify-center items-center gap-2">
-        <FaUserTie /> Book a Session with Experts
+      <h2 className="text-3xl font-semibold tracking-tight text-white text-center mb-10 flex justify-center items-center gap-2">
+        <FaUserTie className="text-blue-500" /> Book a Session with Experts
       </h2>
 
       <div className="md:hidden mb-6 flex justify-center">
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full shadow hover:bg-blue-700 transition"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full px-4 py-2 font-semibold shadow-lg shadow-blue-600/25 transition"
         >
           <FaFilter />
           {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -248,8 +248,8 @@ const ExpertBooking = () => {
               onClick={() => handleRoleFilter(role)}
               className={`px-4 py-2 rounded-full border transition font-semibold ${
                 selectedRole === role
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-blue-600 border-blue-600 hover:bg-blue-100'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/25'
+                  : 'bg-white/5 text-neutral-300 border-white/10 hover:border-white/20 hover:bg-white/10'
               }`}
             >
               {role}
@@ -259,7 +259,7 @@ const ExpertBooking = () => {
           {(searchTerm || selectedRole) && (
             <button
               onClick={clearFilters}
-              className="ml-2 px-4 py-2 rounded-full border border-red-500 text-red-500 hover:bg-red-100 flex items-center gap-1 font-semibold"
+              className="ml-2 px-4 py-2 rounded-full border border-red-500/40 text-red-400 hover:bg-red-500/15 flex items-center gap-1 font-semibold transition"
             >
               <FaTimes /> Clear Filters
             </button>
@@ -274,9 +274,9 @@ const ExpertBooking = () => {
             placeholder="Search by name or role (e.g., React, DSA)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-4 pl-12 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 pl-12 bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <FaSearch className="absolute top-4 left-4 text-gray-400" />
+          <FaSearch className="absolute top-4 left-4 text-neutral-500" />
         </div>
       </div>
 
@@ -285,31 +285,32 @@ const ExpertBooking = () => {
           filteredExperts.map((expert, index) => (
             <motion.div
               key={index}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-2xl p-6 shadow-lg border cursor-pointer hover:shadow-xl transition-shadow"
+              whileHover={{ y: -4, scale: 1.01 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 hover:border-white/20 transition cursor-pointer"
               tabIndex={0}
               aria-label={`Expert ${expert.name}, role ${expert.role}`}
             >
               <img
                 src={expert.avatar}
                 alt={expert.name}
-                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-500"
+                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-500/60"
               />
-              <h3 className="text-xl font-semibold text-center text-gray-800">
+              <h3 className="text-xl font-semibold text-center text-white">
                 {expert.name}
               </h3>
-              <p className="text-blue-600 text-center font-medium">{expert.role}</p>
-              <p className="text-gray-600 mt-3 text-center text-sm">{expert.bio}</p>
+              <p className="text-blue-400 text-center font-medium">{expert.role}</p>
+              <p className="text-neutral-400 mt-3 text-center text-sm">{expert.bio}</p>
               <button
                 onClick={() => openWhatsApp(expert.whatsapp, expert.message)}
-                className="mt-6 w-full flex justify-center items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition"
+                className="mt-6 w-full flex justify-center items-center gap-2 bg-emerald-500/90 hover:bg-emerald-500 text-white px-4 py-2 rounded-full font-semibold shadow-lg shadow-emerald-600/20 transition"
               >
                 <FaWhatsapp /> Book Now on WhatsApp
               </button>
             </motion.div>
           ))
         ) : (
-          <p className="text-center text-gray-600 col-span-full">
+          <p className="text-center text-neutral-400 col-span-full">
             No experts found for "{searchTerm || selectedRole}"
           </p>
         )}

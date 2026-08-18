@@ -104,11 +104,11 @@ const InterviewQAGenerator = () => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-36 px-6 py-10 mt-20 max-w-4xl mx-auto bg-white text-gray-900 rounded-lg shadow-lg"
+      className="min-h-36 px-6 py-10 mt-20 max-w-4xl mx-auto bg-white/5 border border-white/10 backdrop-blur-xl text-white rounded-2xl"
     >
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-blue-600">
-          <FaLightbulb /> AI Interview Q&A Generator
+        <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-2 text-white">
+          <FaLightbulb className="text-blue-500" /> AI Interview Q&A Generator
         </h1>
       </header>
 
@@ -118,7 +118,7 @@ const InterviewQAGenerator = () => {
           placeholder="Enter job role or topic (e.g., React, DSA)"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100 mb-4"
+          className="w-full p-3 rounded-xl border border-white/10 text-lg text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/5 mb-4"
         />
         <input
           type="number"
@@ -127,15 +127,15 @@ const InterviewQAGenerator = () => {
           value={numQuestions}
           onChange={(e) => setNumQuestions(parseInt(e.target.value))}
           placeholder="How many questions? (1-20)"
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100 mb-4"
+          className="w-full p-3 rounded-xl border border-white/10 text-lg text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/5 mb-4"
         />
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className={` flex justify-center items-center gap-2 px-6 py-3 rounded font-semibold transition ${
+          className={`flex justify-center items-center gap-2 px-6 py-3 rounded-full font-semibold shadow-lg transition disabled:opacity-50 ${
             loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
+              ? "bg-neutral-700 cursor-not-allowed shadow-none text-neutral-300"
+              : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/25"
           }`}
         >
           {loading ? (
@@ -148,14 +148,18 @@ const InterviewQAGenerator = () => {
         </button>
       </section>
 
-      {error && <p className="text-red-500 font-semibold mb-4">{error}</p>}
+      {error && (
+        <p className="text-red-400 font-semibold mb-4 bg-red-500/15 rounded-xl px-4 py-3">
+          {error}
+        </p>
+      )}
 
       {loading && (
         <div className="flex flex-col items-center justify-center text-center py-10">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-            className="text-blue-600 text-5xl mb-4"
+            className="text-blue-500 text-5xl mb-4"
           >
             <FaSpinner />
           </motion.div>
@@ -165,7 +169,7 @@ const InterviewQAGenerator = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5 }}
-            className="text-lg font-semibold text-gray-700"
+            className="text-lg font-semibold text-neutral-300"
           >
             {steps[currentStep]}
           </motion.p>
@@ -179,8 +183,8 @@ const InterviewQAGenerator = () => {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center py-8"
         >
-          <FaCheckCircle className="text-green-600 text-6xl mb-4" />
-          <h2 className="text-2xl font-bold text-green-700">
+          <FaCheckCircle className="text-emerald-400 text-6xl mb-4" />
+          <h2 className="text-2xl font-semibold tracking-tight text-emerald-400">
             Interview Q&A Ready!
           </h2>
         </motion.div>
@@ -193,18 +197,23 @@ const InterviewQAGenerator = () => {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="border rounded p-4 shadow bg-gray-50 border-gray-300 transition"
+              whileHover={{ y: -4, scale: 1.01 }}
+              transition={{ delay: index * 0.1, type: 'spring', stiffness: 300, damping: 20 }}
+              className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-4 hover:border-white/20 transition"
             >
               <button
                 onClick={() => toggleIndex(index)}
-                className="w-full flex justify-between items-center text-left text-lg font-semibold focus:outline-none"
+                className="w-full flex justify-between items-center text-left text-lg font-semibold text-white focus:outline-none"
               >
                 {item.question}
-                {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                {openIndex === index ? (
+                  <FaChevronUp className="text-blue-500" />
+                ) : (
+                  <FaChevronDown className="text-blue-500" />
+                )}
               </button>
               {openIndex === index && (
-                <div className="mt-3 prose prose-blue max-w-none text-base leading-relaxed">
+                <div className="mt-3 prose prose-invert max-w-none text-base leading-relaxed text-neutral-300">
                   <Markdown>{item.answer}</Markdown>
                 </div>
               )}

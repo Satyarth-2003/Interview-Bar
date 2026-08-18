@@ -105,11 +105,11 @@ const CompanyOverview = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="min-h-50 px-6 py-10 max-w-4xl mx-auto mt-20 bg-white text-gray-900 rounded-lg shadow-lg"
+      className="min-h-50 px-6 py-10 max-w-5xl mx-auto"
     >
       <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-blue-600 flex items-center gap-3">
-          <FaBuilding /> Company Research Assistant
+        <h1 className="text-3xl font-semibold tracking-tight text-white flex items-center gap-3">
+          <FaBuilding className="text-blue-500" /> Company Research Assistant
         </h1>
       </header>
 
@@ -119,13 +119,15 @@ const CompanyOverview = () => {
           placeholder="Enter company name (e.g., Google, Tesla)"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-100"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button
+        <motion.button
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleGenerate}
           disabled={loading}
-          className={` flex items-center justify-center gap-3 px-5 mt-2 py-2 rounded-xl font-semibold shadow-md transition ${
-            loading ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+          className={`flex items-center justify-center gap-3 px-6 mt-2 py-3 rounded-full font-semibold shadow-lg transition ${
+            loading ? 'bg-white/10 text-neutral-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/25'
           }`}
         >
           {loading ? (
@@ -135,11 +137,11 @@ const CompanyOverview = () => {
           ) : (
             'Get Company Info'
           )}
-        </button>
+        </motion.button>
       </section>
 
       {error && (
-        <p className="text-red-600 font-medium mb-6 text-base max-w-xl">
+        <p className="bg-red-500/15 text-red-400 rounded-xl px-4 py-3 font-medium mb-6 text-base max-w-xl">
           {error}
         </p>
       )}
@@ -153,8 +155,8 @@ const CompanyOverview = () => {
             exit={{ opacity: 0 }}
             className="mb-6 text-center"
           >
-            <FaSpinner className="animate-spin text-blue-600 text-3xl mx-auto mb-3" />
-            <p className="text-lg font-medium text-gray-700">{loadingSteps[currentStep]}</p>
+            <FaSpinner className="animate-spin text-blue-500 text-3xl mx-auto mb-3" />
+            <p className="text-lg font-medium text-neutral-300">{loadingSteps[currentStep]}</p>
           </motion.div>
         )}
 
@@ -164,7 +166,7 @@ const CompanyOverview = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center justify-center gap-3 text-green-600 font-semibold text-lg mb-6"
+            className="flex items-center justify-center gap-3 text-emerald-400 font-semibold text-lg mb-6"
           >
             <FaCheck className="text-2xl" /> Company Research Ready!
           </motion.div>
@@ -172,39 +174,43 @@ const CompanyOverview = () => {
       </AnimatePresence>
 
       {infoSections.length > 0 && !loading && !success && (
-        <div className="flex flex-col md:flex-row gap-4 max-w-full">
-          <nav className="w-full md:w-1/4 border-r border-gray-300">
-            <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-2 md:gap-0">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row gap-4 max-w-full"
+        >
+          <nav className="w-full md:w-1/4 border-r border-white/10">
+            <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-2 md:gap-1">
               {infoSections.map(({ section }) => (
                 <button
                   key={section}
                   onClick={() => setActiveTab(section)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg md:rounded-none md:rounded-r-lg transition-all text-left border-l-4 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left border-l-4 whitespace-nowrap ${
                     activeTab === section
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'hover:bg-gray-200 border-transparent text-gray-800'
+                      ? 'bg-blue-600/20 text-white border-blue-500'
+                      : 'hover:bg-white/5 border-transparent text-neutral-400'
                   }`}
                 >
-                  <span className="text-lg">{iconsMap[section] || null}</span>
+                  <span className="text-lg text-blue-500">{iconsMap[section] || null}</span>
                   <span className="text-sm font-medium">{section}</span>
                 </button>
               ))}
             </div>
           </nav>
 
-          <article className="flex-1 p-5 rounded-lg shadow-inner border border-gray-300 bg-gray-50 overflow-auto max-h-[600px]">
+          <article className="flex-1 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-auto max-h-[600px]">
             {infoSections
               .filter(({ section }) => section === activeTab)
               .map(({ content }) => (
                 <div
                   key={activeTab}
-                  className="mt-3 prose prose-blue max-w-none text-base leading-relaxed"
+                  className="mt-3 prose prose-invert prose-blue max-w-none text-base leading-relaxed text-neutral-300"
                 >
                   <Markdown>{content}</Markdown>
                 </div>
               ))}
           </article>
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );

@@ -65,26 +65,33 @@ const PuzzleGame = () => {
   }, [won]);
 
   const progress = ((currentQuestion + (won ? 1 : 0)) / filteredQuestions.length) * 100;
-  const baseContainer = "flex flex-col items-center justify-center h-screen p-6 transition-all";
+  const baseContainer = "relative flex flex-col items-center justify-center h-screen p-6 bg-black overflow-hidden";
 
   if (!selectedCategory) {
     return (
-      <div className={`${baseContainer} bg-gradient-to-br from-yellow-100 via-blue-100 to-pink-100`}>
+      <div className={baseContainer}>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-blue-600/20 blur-[100px]"
+            animate={{ opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
         <motion.h1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-3xl font-bold mb-6 text-gray-700"
+          className="relative z-10 text-3xl font-semibold mb-6 text-white tracking-tight"
         >
           Choose a Question Category
         </motion.h1>
-        <div className="space-y-4 w-full max-w-md">
+        <div className="relative z-10 space-y-4 w-full max-w-md">
           {categories.map((cat) => (
             <motion.button
               key={cat}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setSelectedCategory(cat)}
-              className="w-full py-4 bg-white text-gray-800 font-semibold rounded-xl shadow hover:bg-gray-100"
+              className="w-full py-4 bg-white/5 border border-white/10 backdrop-blur-xl text-white font-semibold rounded-2xl shadow-lg hover:border-white/20 hover:bg-white/10 transition"
             >
               {cat}
             </motion.button>
@@ -106,13 +113,13 @@ const PuzzleGame = () => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="bg-white text-gray-800 rounded-xl shadow-lg p-6 w-full max-w-lg"
+      className="relative z-10 bg-white/5 border border-white/10 backdrop-blur-xl text-white rounded-2xl shadow-2xl p-6 w-full max-w-lg"
     >
-      <FaQuestionCircle size={40} className="text-blue-400 mb-4 animate-pulse" />
-      <h2 className="text-2xl font-semibold mb-2 text-center">
+      <FaQuestionCircle size={40} className="text-blue-500 mb-4 animate-pulse" />
+      <h2 className="text-2xl font-semibold mb-2 text-center tracking-tight">
         Question {currentQuestion + 1}
       </h2>
-      <p className="text-lg mb-4 text-center">{current.question}</p>
+      <p className="text-lg mb-4 text-center text-neutral-300">{current.question}</p>
       <div className="space-y-3">
         {current.options.map((option, idx) => (
           <motion.button
@@ -120,23 +127,23 @@ const PuzzleGame = () => {
             whileHover={{ scale: 1.03 }}
             onClick={() => handleAnswer(option)}
             key={idx}
-            className="w-full py-3 bg-blue-100 text-blue-800 font-semibold rounded-lg hover:bg-blue-200 transition-all"
+            className="w-full py-3 bg-white/5 border border-white/10 text-neutral-100 font-semibold rounded-xl hover:bg-blue-600/20 hover:border-blue-500/40 transition-all"
           >
             {option}
           </motion.button>
         ))}
       </div>
       <div className="mt-6">
-        <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-green-300 to-green-500"
+            className="h-full bg-blue-600"
             style={{ width: `${progress}%` }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
-        <p className="text-sm text-gray-600 mt-1 text-center">
+        <p className="text-sm text-neutral-400 mt-2 text-center">
           {progress.toFixed(0)}% Complete
         </p>
       </div>
@@ -147,40 +154,65 @@ const PuzzleGame = () => {
 
   if (gameOver) {
     return (
-      <div className={`${baseContainer} bg-gradient-to-br from-red-100 to-red-300 text-red-800`}>
-        <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }}>
+      <div className={`${baseContainer} text-red-400`}>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute inset-0 bg-red-600/10 blur-[100px]"
+            animate={{ opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+        <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }} className="relative z-10">
           <FaSadTear size={80} className="mb-4 animate-bounce" />
         </motion.div>
-        <h2 className="text-3xl font-bold mb-4">Oops! You Lost</h2>
-        <button
+        <h2 className="relative z-10 text-3xl font-semibold mb-4 tracking-tight">Oops! You Lost</h2>
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={resetGame}
-          className="bg-white text-red-600 px-6 py-3 rounded-lg shadow hover:bg-red-100 transition"
+          className="relative z-10 bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg shadow-red-600/25 transition"
         >
           Try Again
-        </button>
+        </motion.button>
       </div>
     );
   }
 
   if (won) {
     return (
-      <div className={`${baseContainer} bg-gradient-to-br from-green-100 to-green-300 text-green-800`}>
-        <motion.div initial={{ rotate: -10 }} animate={{ rotate: 10 }} transition={{ repeat: Infinity, duration: 1, repeatType: "reverse" }}>
+      <div className={`${baseContainer} text-blue-400`}>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute inset-0 bg-blue-600/10 blur-[100px]"
+            animate={{ opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+        <motion.div initial={{ rotate: -10 }} animate={{ rotate: 10 }} transition={{ repeat: Infinity, duration: 1, repeatType: "reverse" }} className="relative z-10">
           <FaSmileBeam size={90} className="mb-4" />
         </motion.div>
-        <h2 className="text-3xl font-bold mb-4">🎉 You Win!</h2>
-        <button
+        <h2 className="relative z-10 text-3xl font-semibold mb-4 tracking-tight text-white">🎉 You Win!</h2>
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={resetGame}
-          className="bg-white text-green-600 px-6 py-3 rounded-lg shadow hover:bg-green-100 transition"
+          className="relative z-10 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg shadow-blue-600/25 transition"
         >
           Play Again
-        </button>
+        </motion.button>
       </div>
     );
   }
 
   return (
-    <div className={`${baseContainer} bg-gradient-to-br from-blue-100 via-pink-100 to-yellow-100`}>
+    <div className={baseContainer}>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-blue-600/20 blur-[100px]"
+          animate={{ opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
       <AnimatePresence mode="wait">
         {showQuestion && <QuestionCard key={currentQuestion} />}
       </AnimatePresence>

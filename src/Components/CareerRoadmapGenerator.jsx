@@ -35,7 +35,7 @@ function LoadingSteps() {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-        className="text-blue-600 text-5xl mb-4"
+        className="text-blue-500 text-5xl mb-4"
       >
         <FaSpinner />
       </motion.div>
@@ -45,7 +45,7 @@ function LoadingSteps() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
-        className="text-lg font-semibold text-gray-700"
+        className="text-lg font-semibold text-neutral-300"
       >
         {steps[stepIndex]}
       </motion.p>
@@ -139,11 +139,11 @@ Skills or Interests: ${skills.trim() ? skills : 'N/A'}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="min-h-50 px-6 py-10 max-w-4xl mx-auto mt-20 bg-white text-gray-900 rounded-lg shadow-lg"
+      className="min-h-50 px-6 py-10 max-w-5xl mx-auto"
     >
       <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-blue-600 flex items-center gap-3">
-          <FaRoad /> AI Career Path Generator
+        <h1 className="text-3xl font-semibold tracking-tight text-white flex items-center gap-3">
+          <FaRoad className="text-blue-500" /> AI Career Path Generator
         </h1>
       </header>
 
@@ -153,30 +153,32 @@ Skills or Interests: ${skills.trim() ? skills : 'N/A'}
           placeholder="Your Current Role"
           value={currentRole}
           onChange={(e) => setCurrentRole(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
         <input
           type="text"
           placeholder="Your Target Role"
           value={targetRole}
           onChange={(e) => setTargetRole(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
         <textarea
           rows={3}
           placeholder="Skills or interests (optional)"
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-          className="w-full p-3 rounded-lg border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-blue-300 transition resize-none"
+          className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
         />
       </section>
 
       <section className="mb-10 flex flex-wrap items-center gap-4">
-        <button
+        <motion.button
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleGenerate}
           disabled={loading}
-          className={`flex items-center gap-3 px-6 py-2 rounded-xl font-semibold text-white shadow-md transition ${
-            loading ? 'bg-gray-400 cursor-not-allowed text-gray-700' : 'bg-blue-600 hover:bg-blue-700'
+          className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold text-white shadow-lg transition ${
+            loading ? 'bg-white/10 text-neutral-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/25'
           }`}
         >
           {loading ? (
@@ -188,11 +190,11 @@ Skills or Interests: ${skills.trim() ? skills : 'N/A'}
               <FaRoad className="text-lg" /> Generate Career Path
             </>
           )}
-        </button>
+        </motion.button>
         {timeline.length > 0 && (
           <button
             onClick={resetAll}
-            className="ml-auto flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl font-semibold shadow-md transition focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="ml-auto flex items-center gap-3 border border-white/20 text-white hover:bg-white/10 px-5 py-3 rounded-full font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <FaRedoAlt className="text-lg" /> New Path
           </button>
@@ -200,7 +202,7 @@ Skills or Interests: ${skills.trim() ? skills : 'N/A'}
       </section>
 
       {error && (
-        <p className="text-center text-red-600 font-semibold mb-6 text-base" role="alert">
+        <p className="text-center bg-red-500/15 text-red-400 rounded-full px-4 py-2 font-semibold mb-6 text-base" role="alert">
           {error}
         </p>
       )}
@@ -209,35 +211,36 @@ Skills or Interests: ${skills.trim() ? skills : 'N/A'}
 
       {success && (
         <div className="flex flex-col items-center justify-center py-10 text-center">
-          <FaCheckCircle className="text-green-600 text-6xl mb-4" />
-          <p className="text-2xl font-bold text-gray-800">Career Roadmap Ready!</p>
+          <FaCheckCircle className="text-emerald-400 text-6xl mb-4" />
+          <p className="text-2xl font-semibold tracking-tight text-white">Career Roadmap Ready!</p>
         </div>
       )}
 
       {!loading && !success && timeline.length > 0 && (
         <section
           id="career-path-result"
-          className="p-6 rounded-xl shadow-lg border border-gray-300 bg-gray-50 text-gray-900"
+          className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
         >
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-blue-600">
-            <FaCalendarAlt /> Career Path Timeline
+          <h2 className="text-2xl font-semibold tracking-tight mb-6 flex items-center gap-3 text-white">
+            <FaCalendarAlt className="text-blue-500" /> Career Path Timeline
           </h2>
-          <div className="relative before:absolute before:w-1 before:bg-blue-600 before:rounded-full before:h-full before:left-10 before:top-0">
+          <div className="relative before:absolute before:w-1 before:bg-blue-500/40 before:rounded-full before:h-full before:left-10 before:top-0">
             {timeline.map(({ step, title, description, duration }) => (
               <motion.div
                 key={step}
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: step * 0.1, duration: 0.4 }}
-                className="relative mb-10 pl-24 pr-6 py-5 rounded-xl shadow-md border border-gray-300 bg-white"
-                style={{ borderLeft: '6px solid #2563eb' }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                transition={{ delay: step * 0.1, duration: 0.4, type: 'spring', stiffness: 300, damping: 20 }}
+                className="relative mb-10 pl-24 pr-6 py-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition"
+                style={{ borderLeft: '4px solid #3b82f6' }}
               >
-                <div className="absolute left-0 top-8 flex items-center justify-center w-10 h-10 rounded-full border-4 border-blue-600 bg-blue-100 text-blue-600 font-bold text-lg select-none">
+                <div className="absolute left-0 top-8 flex items-center justify-center w-10 h-10 rounded-full border-4 border-blue-500 bg-blue-500/15 text-blue-400 font-bold text-lg select-none">
                   {step}
                 </div>
-                <h3 className="text-xl font-semibold mb-1">{title}</h3>
-                <p className="text-sm italic text-blue-600 font-medium mb-3">{duration}</p>
-                <p className="text-base leading-relaxed">{description}</p>
+                <h3 className="text-xl font-semibold mb-1 text-white">{title}</h3>
+                <p className="text-sm italic text-blue-400 font-medium mb-3">{duration}</p>
+                <p className="text-base leading-relaxed text-neutral-300">{description}</p>
               </motion.div>
             ))}
           </div>

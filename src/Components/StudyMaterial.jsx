@@ -211,20 +211,20 @@ const StudyMaterialDownload = () => {
 
   return (
   <motion.div
-    className="max-w-6xl mx-auto px-6 py-6"
+    className="max-w-6xl mx-auto px-4 py-10"
     initial={{ opacity: 0, y: 40 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
   >
-    <h2 className="text-3xl font-bold text-blue-600 text-center mb-10 flex justify-center items-center gap-2">
-      <FaBookOpen /> Download Study Materials
+    <h2 className="text-3xl font-semibold tracking-tight text-white text-center mb-10 flex justify-center items-center gap-2">
+      <FaBookOpen className="text-blue-500" /> Download Study Materials
     </h2>
 
     {/* Toggle Filters Button (only on small screens) */}
     <div className="md:hidden mb-6 flex justify-center">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full shadow hover:bg-blue-700 transition"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full px-4 py-2 font-semibold shadow-lg shadow-blue-600/25 transition"
             >
               <FaFilter />
               {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -246,8 +246,8 @@ const StudyMaterialDownload = () => {
             onClick={() => handleCategoryFilter(cat)}
             className={`px-4 py-2 rounded-full border transition font-semibold ${
               selectedCategory === cat
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-blue-600 border-blue-600 hover:bg-blue-100'
+                ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/25'
+                : 'bg-white/5 text-neutral-300 border-white/10 hover:border-white/20 hover:bg-white/10'
             }`}
           >
             {cat}
@@ -256,7 +256,7 @@ const StudyMaterialDownload = () => {
         {(searchTerm || selectedCategory) && (
           <button
             onClick={clearFilters}
-            className="ml-4 px-4 py-2 rounded-full border border-red-500 text-red-500 hover:bg-red-100 flex items-center gap-1 font-semibold"
+            className="ml-4 px-4 py-2 rounded-full border border-red-500/40 text-red-400 hover:bg-red-500/15 flex items-center gap-1 font-semibold transition"
           >
             <FaTimes /> Clear Filters
           </button>
@@ -271,9 +271,9 @@ const StudyMaterialDownload = () => {
             placeholder="Search by title or category"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-4 pl-12 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-4 pl-12 bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <FaSearch className="absolute top-4 left-4 text-gray-400" />
+          <FaSearch className="absolute top-4 left-4 text-neutral-500" />
         </div>
       </div>
     </div>
@@ -284,17 +284,22 @@ const StudyMaterialDownload = () => {
         filteredMaterials.map((material, index) => (
           <motion.div
             key={index}
-            whileHover={{ scale: 1.05 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border cursor-pointer hover:shadow-xl transition-shadow"
+            whileHover={{ y: -4, scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 hover:border-white/20 transition cursor-pointer"
           >
-            <h3 className="text-xl font-semibold text-gray-800 mb-2 text-center">{material.title}</h3>
-            <p className="text-blue-600 text-center font-medium">{material.category}</p>
-            <p className="text-gray-600 mt-3 text-center text-sm">{material.description}</p>
+            <h3 className="text-xl font-semibold text-white mb-2 text-center">{material.title}</h3>
+            <p className="text-center">
+              <span className="bg-blue-500/15 text-blue-400 rounded-full px-3 py-1 text-xs font-semibold">
+                {material.category}
+              </span>
+            </p>
+            <p className="text-neutral-400 mt-3 text-center text-sm">{material.description}</p>
 
             <a
               href={material.fileUrl}
               download
-              className="mt-6 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition"
+              className="mt-6 block w-full text-center bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-full font-semibold shadow-lg shadow-blue-600/25 transition"
             >
               <FaDownload className="inline mr-2" />
               Download PDF
@@ -302,7 +307,7 @@ const StudyMaterialDownload = () => {
           </motion.div>
         ))
       ) : (
-        <p className="text-center text-gray-600 col-span-full">
+        <p className="text-center text-neutral-400 col-span-full">
           No materials found for "{searchTerm || selectedCategory}"
         </p>
       )}

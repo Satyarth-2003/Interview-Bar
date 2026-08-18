@@ -80,11 +80,11 @@ const JobSearch = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-5xl mx-auto mt-20 bg-white rounded-lg shadow-lg p-10 text-gray-900"
+      className="max-w-5xl mx-auto mt-20 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-10 text-white"
     >
       <header className="mb-10">
-        <h1 className="text-4xl font-bold text-blue-600 flex items-center gap-3">
-          <FaBuilding /> Job Search
+        <h1 className="text-4xl font-semibold tracking-tight text-white flex items-center gap-3">
+          <FaBuilding className="text-blue-500" /> Job Search
         </h1>
       </header>
 
@@ -94,7 +94,7 @@ const JobSearch = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Job title or keyword"
-          className="w-full p-4 rounded-lg border border-gray-300 bg-gray-100 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full p-4 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
@@ -102,26 +102,26 @@ const JobSearch = () => {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="Location (optional)"
-          className="w-full p-4 rounded-lg border border-gray-300 bg-gray-100 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full p-4 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-neutral-500 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <select
           value={jobType}
           onChange={(e) => setJobType(e.target.value)}
-          className="w-full p-4 rounded-lg border border-gray-300 bg-gray-100 text-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full p-4 rounded-xl border border-white/10 bg-white/5 text-white text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Any Type</option>
-          <option value="full-time">Full-time</option>
-          <option value="part-time">Part-time</option>
-          <option value="remote">Remote</option>
-          <option value="contract">Contract</option>
+          <option className="bg-neutral-900" value="">Any Type</option>
+          <option className="bg-neutral-900" value="full-time">Full-time</option>
+          <option className="bg-neutral-900" value="part-time">Part-time</option>
+          <option className="bg-neutral-900" value="remote">Remote</option>
+          <option className="bg-neutral-900" value="contract">Contract</option>
         </select>
 
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-4 rounded-lg font-semibold transition ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"
+          className={`w-full py-4 rounded-full font-semibold shadow-lg transition disabled:opacity-50 ${
+            loading ? "bg-neutral-700 cursor-not-allowed shadow-none text-neutral-300" : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/25"
           } flex justify-center items-center gap-3`}
         >
           {loading ? (
@@ -137,7 +137,7 @@ const JobSearch = () => {
       <AnimatePresence>
         {error && (
           <motion.p
-            className="mt-6 text-red-600 font-semibold text-center"
+            className="mt-6 text-red-400 font-semibold text-center bg-red-500/15 rounded-xl px-4 py-3"
             role="alert"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -149,7 +149,7 @@ const JobSearch = () => {
 
         {success && (
           <motion.div
-            className="mt-6 flex items-center justify-center text-green-600 gap-2 font-semibold text-lg"
+            className="mt-6 flex items-center justify-center text-emerald-400 gap-2 font-semibold text-lg"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -169,31 +169,32 @@ const JobSearch = () => {
                   key={job.job_id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-gray-50 rounded-lg shadow-md p-6 hover:shadow-xl transition cursor-pointer"
+                  whileHover={{ y: -4, scale: 1.01 }}
+                  transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 20 }}
+                  className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 hover:border-white/20 transition cursor-pointer"
                 >
                   <div className="flex items-center mb-4 gap-4">
                     {job.employer_logo ? (
                       <img
                         src={job.employer_logo}
                         alt={`${job.employer_name} logo`}
-                        className="w-14 h-14 object-contain rounded"
+                        className="w-14 h-14 object-contain rounded bg-white/5 p-1"
                       />
                     ) : (
-                      <FaBuilding className="text-gray-400 text-4xl" />
+                      <FaBuilding className="text-neutral-500 text-4xl" />
                     )}
                     <div>
-                      <h2 className="text-xl font-bold text-gray-800">
+                      <h2 className="text-xl font-semibold text-white">
                         {job.job_title}
                       </h2>
-                      <p className="text-gray-600">{job.employer_name || "Unknown Company"}</p>
+                      <p className="text-neutral-400">{job.employer_name || "Unknown Company"}</p>
                     </div>
                   </div>
 
                   <motion.div
                     animate={{ height: isExpanded ? "auto" : 60 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden text-gray-700 mb-2 text-sm leading-relaxed"
+                    className="overflow-hidden text-neutral-300 mb-2 text-sm leading-relaxed"
                   >
                     {isExpanded ? job.job_description || "No description available." : (job.job_description || "No description available.").slice(0, 150) + "..."}
                   </motion.div>
@@ -201,31 +202,31 @@ const JobSearch = () => {
                   {job.job_description && job.job_description.length > 150 && (
                     <button
                       onClick={() => setExpandedJobId(isExpanded ? null : job.job_id)}
-                      className="text-blue-600 font-semibold mb-4 hover:underline text-sm"
+                      className="text-blue-400 font-semibold mb-4 hover:underline text-sm"
                     >
                       {isExpanded ? "Show Less" : "Read More"}
                     </button>
                   )}
 
-                  <div className="flex flex-wrap text-sm text-gray-500 gap-4 mb-4">
+                  <div className="flex flex-wrap text-sm text-neutral-400 gap-4 mb-4">
                     {job.job_city && (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 bg-blue-500/15 text-blue-400 rounded-full px-3 py-1 text-xs font-semibold">
                         <FiMapPin /> {job.job_city}, {job.job_country}
                       </span>
                     )}
                     {job.job_employment_type && (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 bg-emerald-500/15 text-emerald-400 rounded-full px-3 py-1 text-xs font-semibold">
                         <FiBriefcase /> {job.job_employment_type}
                       </span>
                     )}
                     {job.job_posted_at_datetime_utc && (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 bg-amber-500/15 text-amber-400 rounded-full px-3 py-1 text-xs font-semibold">
                         <FiClock />{" "}
                         {new Date(job.job_posted_at_datetime_utc).toLocaleDateString()}
                       </span>
                     )}
                     {job.job_salary && (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 bg-purple-500/15 text-purple-400 rounded-full px-3 py-1 text-xs font-semibold">
                         <MdWork /> {job.job_salary}
                       </span>
                     )}
@@ -235,7 +236,7 @@ const JobSearch = () => {
                     href={job.job_apply_link || job.job_google_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:underline"
+                    className="inline-flex items-center gap-2 text-blue-400 font-semibold hover:underline"
                   >
                     Apply Now <FaExternalLinkAlt />
                   </a>
@@ -248,19 +249,19 @@ const JobSearch = () => {
             <button
               onClick={() => handlePageChange(-1)}
               disabled={page <= 1 || loading}
-              className={`px-6 py-3 rounded-lg font-semibold transition ${
+              className={`px-6 py-3 rounded-full font-semibold transition ${
                 page <= 1 || loading
-                  ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                  : "bg-gray-200 hover:bg-gray-300"
+                  ? "bg-white/5 cursor-not-allowed text-neutral-600 border border-white/10"
+                  : "border border-white/20 text-white hover:bg-white/10"
               }`}
             >
               Previous
             </button>
-            <span className="text-lg font-medium text-gray-700">Page {page}</span>
+            <span className="text-lg font-medium text-neutral-300">Page {page}</span>
             <button
               onClick={() => handlePageChange(1)}
               disabled={loading || jobs.length === 0}
-              className="px-6 py-3 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 transition"
+              className="px-6 py-3 rounded-full font-semibold border border-white/20 text-white hover:bg-white/10 transition disabled:opacity-50"
             >
               Next
             </button>
@@ -269,8 +270,8 @@ const JobSearch = () => {
       )}
 
       {loading && (
-        <div className="fixed inset-0 bg-black/20 flex justify-center items-center z-50">
-          <FaSpinner className="animate-spin text-blue-600 text-6xl" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
+          <FaSpinner className="animate-spin text-blue-500 text-6xl" />
         </div>
       )}
     </motion.div>
