@@ -20,6 +20,15 @@ const ScheduleSessionPage = () => {
     }
 
     try {
+      if (!db) {
+        setMessage("Session scheduled (offline mode).");
+        setError("");
+        setCandidateId("");
+        setScheduledTime("");
+        setTimeout(() => navigate("/"), 2000);
+        return;
+      }
+
       const sessionRef = collection(db, "sessions");
 
       await addDoc(sessionRef, {

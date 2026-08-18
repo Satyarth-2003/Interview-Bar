@@ -54,6 +54,11 @@ const DashboardOverview = () => {
 
   useEffect(() => {
     setLoading(true);
+    if (!db) {
+      setLoading(false);
+      return;
+    }
+
     const userId = getAnonymousUserId();
 
     const q = query(
